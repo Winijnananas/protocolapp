@@ -9,6 +9,7 @@ class CamScreen extends StatefulWidget {
 class _CamScreenState extends State<CamScreen> {
   late List<CameraDescription> cameras;
   late CameraController controller;
+  bool isMuted = false;
 
   @override
   void initState() {
@@ -33,14 +34,30 @@ class _CamScreenState extends State<CamScreen> {
     super.dispose();
   }
 
+  void toggleMute() {
+    setState(() {
+      isMuted = !isMuted;
+    });
+    // Perform actions for muting/unmuting
+  }
+
+  void hangUp() {
+    // Perform hang-up action
+    Navigator.pop(context); // Example: Return to the previous screen
+  }
+
+  void toggleCamera() {
+    // Perform actions for toggling the camera
+    // Example: switch between front and back cameras
+  }
+
   @override
   Widget build(BuildContext context) {
-    // ignore: unnecessary_null_comparison
     if (controller == null || !controller.value.isInitialized) {
       return Scaffold(
         appBar: AppBar(
           title: Text(
-            'Camera Page',
+            'RTC SCREEN',
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
           centerTitle: true,
@@ -55,24 +72,47 @@ class _CamScreenState extends State<CamScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Camera Page',
+          'RTC SCREEN',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         backgroundColor: Colors.red,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CameraPreview(controller), // แสดงกล้องใน Widget CameraPreview
-            SizedBox(height: 20),
-            Text(
-              'This is the Camera Page',
-              style: TextStyle(color: Colors.black),
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: CameraPreview(controller),
+          ),
+          Positioned(
+            bottom: 16,
+            left: 16,
+            child: Row(
+              children: [
+                IconButton(
+                  onPressed: toggleMute,
+                  icon: Icon(
+                    isMuted ? Icons.mic_off : Icons.mic,
+                    color: Colors.white,
+                  ),
+                ),
+                IconButton(
+                  onPressed: hangUp,
+                  icon: Icon(
+                    Icons.call_end,
+                    color: Colors.red,
+                  ),
+                ),
+                IconButton(
+                  onPressed: toggleCamera,
+                  icon: Icon(
+                    Icons.switch_camera,
+                    color: Colors.blue,
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

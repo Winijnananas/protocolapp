@@ -36,22 +36,36 @@ class ImageSlider extends StatelessWidget {
 }
 
 class HomeScreen extends StatelessWidget {
+  final List<String> frequentlyAskedQuestions = [
+    '1.คุณต้องการความช่วยเหลือ ?',
+    '2.ห้องน้ำไปทางไหน ? ',
+    '3.RTC คืออะไร ',
+    '4.ธนาคารไปทางไหน ? ',
+    '5.ทำธุรกรรมได้ที่ไหน ? ',
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'CentralRTCApp',
-          style: TextStyle(color: Colors.white),
+          'HOME',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
+        centerTitle: true,
         backgroundColor: Colors.red,
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Container(
-            margin: EdgeInsets.only(top: 10),
-            child: ImageSlider(),
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              Container(
+                margin: EdgeInsets.only(top: 10),
+                child: ImageSlider(),
+              ),
+            ],
           ),
           Expanded(
             child: Center(
@@ -72,15 +86,35 @@ class HomeScreen extends StatelessWidget {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.red, // Background color red
+                      primary: const Color.fromARGB(
+                          255, 54, 158, 244), // Background color red
                       onPrimary: Colors.white, // Text color white
-                      minimumSize:
-                          Size(400, 50), // Set minimum width and height
+                      minimumSize: Size(300, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero, // No borderRadius
+                      ), // Set minimum width and height
                     ),
                     child: Text(
                       'ติดต่อเจ้าหน้าที่',
                       style: TextStyle(fontSize: 30),
                     ),
+                  ),
+                  SizedBox(
+                      height:
+                          20), // Adding space between the button and FAQ list
+                  Text(
+                    'คำถามที่พบบ่อย',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  Column(
+                    children: frequentlyAskedQuestions
+                        .map((question) => ListTile(
+                              title: Text(question),
+                              onTap: () {
+                                // Handle tapping on a question
+                              },
+                            ))
+                        .toList(),
                   ),
                 ],
               ),
