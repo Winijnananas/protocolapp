@@ -16,7 +16,7 @@ class _CamScreenState extends State<CamScreen> {
     availableCameras().then((availableCameras) {
       cameras = availableCameras;
       if (cameras.length > 0) {
-        controller = CameraController(cameras[0], ResolutionPreset.medium);
+        controller = CameraController(cameras[0], ResolutionPreset.high);
         controller.initialize().then((_) {
           if (!mounted) {
             return;
@@ -35,6 +35,7 @@ class _CamScreenState extends State<CamScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: unnecessary_null_comparison
     if (controller == null || !controller.value.isInitialized) {
       return Scaffold(
         appBar: AppBar(
