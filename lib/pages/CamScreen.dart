@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:camera/camera.dart';
+import 'package:flutter_webrtc/flutter_webrtc.dart';
 
 class CamScreen extends StatefulWidget {
   @override
@@ -7,113 +7,108 @@ class CamScreen extends StatefulWidget {
 }
 
 class _CamScreenState extends State<CamScreen> {
-  late List<CameraDescription> cameras;
-  late CameraController controller;
-  bool isMuted = false;
+  RTCPeerConnection? _peerConnection;
+  MediaStream? _localStream;
+  RTCVideoRenderer _localRenderer = RTCVideoRenderer();
 
   @override
   void initState() {
     super.initState();
-    availableCameras().then((availableCameras) {
-      cameras = availableCameras;
-      if (cameras.length > 0) {
-        controller = CameraController(cameras[0], ResolutionPreset.high);
-        controller.initialize().then((_) {
-          if (!mounted) {
-            return;
-          }
-          setState(() {});
-        });
-      }
-    });
+    _initRTC();
+  }
+
+  Future<void> _initRTC() async {
+    final configuration = <String, dynamic>{
+      'iceServers': [
+        {'urls': 'stun:stun.l.google.com:19302'},
+      ],
+    };
+
+    final Map<String, dynamic> mediaConstraints = {
+      'audio': true,
+      'video': true,
+    };
+
+    _localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
+    _peerConnection = await createPeerConnection(configuration, {});
+
+    if (_localStream != null) {
+      _peerConnection?.addStream(_localStream!);
+    }
+
+    _localRenderer.srcObject = _localStream;
+    await _localRenderer.initialize();
   }
 
   @override
   void dispose() {
-    controller.dispose();
+    _localStream?.dispose();
+    _peerConnection?.close();
+    _localRenderer.dispose();
     super.dispose();
   }
 
+  void toggleCamera() async {
+    if (_localStream != null) {
+      final videoTrack = _localStream!.getVideoTracks()[0];
+      await videoTrack.switchCamera();
+    }
+  }
+
   void toggleMute() {
-    setState(() {
-      isMuted = !isMuted;
-    });
-    // Perform actions for muting/unmuting
+    if (_localStream != null) {
+      final audioTrack = _localStream!.getAudioTracks()[0];
+      audioTrack.enabled = !audioTrack.enabled;
+      setState(() {}); // ให้ UI ทำการ rebuild เพื่อแสดงสถานะเปิด/ปิดเสียงใหม่
+    }
   }
 
   void hangUp() {
-    // Perform hang-up action
-    Navigator.pop(context); // Example: Return to the previous screen
-  }
-
-  void toggleCamera() {
-    // Perform actions for toggling the camera
-    // Example: switch between front and back cameras
+    _peerConnection?.close();
+    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    if (controller == null || !controller.value.isInitialized) {
-      return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'RTC SCREEN',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-          centerTitle: true,
-          backgroundColor: Colors.red,
-        ),
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
-
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'RTC SCREEN',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.red,
+        title: Text('CamScreen'),
       ),
-      body: Stack(
+      body: Center(
+        child: _localRenderer.textureId != null
+            ? RTCVideoView(_localRenderer)
+            : CircularProgressIndicator(),
+      ),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Positioned.fill(
-            child: CameraPreview(controller),
+          FloatingActionButton(
+            onPressed: toggleCamera,
+            tooltip: 'Switch Camera',
+            child: Icon(Icons.switch_camera),
           ),
-          Positioned(
-            bottom: 16,
-            left: 16,
-            child: Row(
-              children: [
-                IconButton(
-                  onPressed: toggleMute,
-                  icon: Icon(
-                    isMuted ? Icons.mic_off : Icons.mic,
-                    color: Colors.white,
-                  ),
-                ),
-                IconButton(
-                  onPressed: hangUp,
-                  icon: Icon(
-                    Icons.call_end,
-                    color: Colors.red,
-                  ),
-                ),
-                IconButton(
-                  onPressed: toggleCamera,
-                  icon: Icon(
-                    Icons.switch_camera,
-                    color: Colors.blue,
-                  ),
-                ),
-              ],
-            ),
+          SizedBox(height: 16),
+          FloatingActionButton(
+            onPressed: toggleMute,
+            tooltip: 'Toggle Mute',
+            child: Icon(Icons.mic, color: _isMuted() ? Colors.red : null),
+          ),
+          SizedBox(height: 16),
+          FloatingActionButton(
+            onPressed: hangUp,
+            tooltip: 'Hang Up',
+            child: Icon(Icons.call_end),
           ),
         ],
       ),
     );
+  }
+
+  bool _isMuted() {
+    if (_localStream != null) {
+      final audioTrack = _localStream!.getAudioTracks()[0];
+      return !audioTrack.enabled;
+    }
+    return false;
   }
 }
