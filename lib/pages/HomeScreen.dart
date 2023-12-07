@@ -86,8 +86,7 @@ class HomeScreen extends StatelessWidget {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      primary: const Color.fromARGB(
-                          255, 54, 158, 244), // Background color red
+                      primary: Colors.red, // Background color red
                       onPrimary: Colors.white, // Text color white
                       minimumSize: Size(300, 50),
                       shape: RoundedRectangleBorder(
