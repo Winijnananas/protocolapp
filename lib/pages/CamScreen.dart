@@ -87,6 +87,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import './About.dart';
 
 class CamScreen extends StatefulWidget {
   @override

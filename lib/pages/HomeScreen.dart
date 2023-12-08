@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import './CamScreen.dart'; // นำเข้าหน้า CamScreen
+import './About.dart';
 
 class ImageSlider extends StatelessWidget {
   @override
@@ -90,31 +91,32 @@ class HomeScreen extends StatelessWidget {
                       onPrimary: Colors.white, // Text color white
                       minimumSize: Size(300, 50),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.zero, // No borderRadius
-                      ), // Set minimum width and height
+                          borderRadius:
+                              BorderRadius.circular(7) // No borderRadius
+                          ), // Set minimum width and height
                     ),
                     child: Text(
-                      'ติดต่อเจ้าหน้าที่',
+                      'CONTACT STAFF',
                       style: TextStyle(fontSize: 30),
                     ),
                   ),
                   SizedBox(
                       height:
                           20), // Adding space between the button and FAQ list
-                  Text(
-                    'คำถามที่พบบ่อย',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  Column(
-                    children: frequentlyAskedQuestions
-                        .map((question) => ListTile(
-                              title: Text(question),
-                              onTap: () {
-                                // Handle tapping on a question
-                              },
-                            ))
-                        .toList(),
-                  ),
+                  // Text(
+                  //   'คำถามที่พบบ่อย',
+                  //   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  // ),
+                  // Column(
+                  //   children: frequentlyAskedQuestions
+                  //       .map((question) => ListTile(
+                  //             title: Text(question),
+                  //             onTap: () {
+                  //               // Handle tapping on a question
+                  //             },
+                  //           ))
+                  //       .toList(),
+                  // ),
                 ],
               ),
             ),
