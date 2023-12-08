@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "438996640885",
+    "firebase_url": "https://app-rtc-d7a32-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "app-rtc-d7a32",
+    "storage_bucket": "app-rtc-d7a32.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:438996640885:android:4d6a0a4455feddd8ea843c",
+        "android_client_info": {
+          "package_name": "com.example.protocolapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDS4QOV8yWY20A5ppijbLibYz6eN52CjGM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

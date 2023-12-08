@@ -41,6 +41,10 @@ dependencies:
   flutter_webrtc_wrapper: ^1.0.2
   snippet_coder_utils: ^1.0.15
   carousel_slider: ^4.0.0
+  cloud_firestore: ^4.13.4
+  firebase_core: ^2.24.1
+  firebase_database: ^10.3.7
+  flutter_webrtc: ^0.9.47
 dev_dependencies:
   flutter_test:
     sdk: flutter

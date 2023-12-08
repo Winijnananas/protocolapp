@@ -10,11 +10,17 @@ import './pages/HomeScreen.dart';
 import './pages/CamScreen.dart';
 import './navigations/routes.dart';
 import './pages/About.dart';
+import 'package:firebase_core/firebase_core.dart'; // import Firebase Core
 // import './pages/CamScreen.dart'; // นำเข้า CamScreen ไว้ที่นี่
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(); // เรียกใช้ Firebase.initializeApp() ที่นี่
   runApp(MyApp());
 }
+// void main() {
+//   runApp(MyApp());
+// }
 
 class MyApp extends StatelessWidget {
   @override

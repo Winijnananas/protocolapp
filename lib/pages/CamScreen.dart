@@ -1,93 +1,6 @@
-// import 'package:flutter/material.dart';
-// import 'package:flutter_webrtc/flutter_webrtc.dart';
-
-// class CamScreen extends StatefulWidget {
-//   @override
-//   _CamScreenState createState() => _CamScreenState();
-// }
-
-// class _CamScreenState extends State<CamScreen> {
-//   late RTCVideoRenderer _localRenderer;
-//   late RTCPeerConnection _peerConnection;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     _localRenderer = RTCVideoRenderer();
-//     _initWebRTC();
-//   }
-
-//   Future<void> _initWebRTC() async {
-//     _peerConnection = await createPeerConnection({
-//       'iceServers': [
-//         {'url': 'stun:stun.l.google.com:19302'},
-//       ],
-//     }, {});
-
-//     _localRenderer = RTCVideoRenderer(); // Initialize _localRenderer
-//     await _localRenderer.initialize();
-
-//     //  getUserMedia and other WebRTC setup
-
-//     Future<void> _initWebRTC() async {
-//       _peerConnection = await createPeerConnection({
-//         'iceServers': [
-//           {'url': 'stun:stun.l.google.com:19302'},
-//         ],
-//       }, {});
-
-//       _localRenderer = RTCVideoRenderer(); // Initialize _localRenderer
-//       await _localRenderer.initialize();
-
-//       MediaStream stream = await navigator.mediaDevices.getUserMedia({
-//         'audio': true,
-//         'video': true,
-//       });
-//       stream.getTracks().forEach((track) {
-//         _peerConnection.addTrack(track, stream);
-//       });
-
-//       _localRenderer.srcObject = stream;
-
-//       RTCSessionDescription offer = await _peerConnection.createOffer({});
-//       await _peerConnection.setLocalDescription(offer);
-
-//       // Send offer to signaling server
-//       // You'll need to implement this part to send the offer to your signaling server
-//     }
-//   }
-
-//   @override
-//   void dispose() {
-//     _localRenderer.dispose();
-//     _peerConnection.dispose();
-//     super.dispose();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('CamScreen'),
-//       ),
-//       body: Center(
-//         child: _localRenderer.srcObject != null
-//             ? RTCVideoView(_localRenderer)
-//             : CircularProgressIndicator(),
-//       ),
-//       floatingActionButton: FloatingActionButton(
-//         onPressed: () {
-//           // Implement logic to toggle mute/unmute here
-//         },
-//         child: Icon(Icons.mic),
-//       ),
-//     );
-//   }
-// }
-
 import 'package:flutter/material.dart';
-import 'package:camera/camera.dart';
-import './About.dart';
+import 'package:flutter_webrtc/flutter_webrtc.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class CamScreen extends StatefulWidget {
   @override
@@ -95,61 +8,94 @@ class CamScreen extends StatefulWidget {
 }
 
 class _CamScreenState extends State<CamScreen> {
-  late CameraController _controller;
-  late Future<void> _initializeControllerFuture;
+  final reference = FirebaseDatabase.instance.reference().child('vdo_calls');
+
+  late RTCPeerConnection _peerConnection;
+  late MediaStream _localStream;
+  late MediaStream _remoteStream;
 
   @override
   void initState() {
     super.initState();
-    // ดึงข้อมูลกล้องแรกที่พบ
-    _controller = CameraController(
-      // สามารถเปลี่ยนข้อมูลกล้องตามที่คุณมีได้
-      CameraDescription(
-        name: 'Camera 0',
-        lensDirection: CameraLensDirection.back,
-        sensorOrientation: 90, // สามารถเปลี่ยนค่าตามต้องการของกล้อง
-      ),
+    initWebRTC();
+  }
 
-      ResolutionPreset.medium,
-    );
+  Future<void> initWebRTC() async {
+    final configuration = <String, dynamic>{'iceServers': []};
+    _peerConnection = await createPeerConnection(configuration, {});
 
-    // เริ่มต้นกล้องและเก็บ Future ไว้
-    _initializeControllerFuture = _controller.initialize();
+    final mediaConstraints = <String, dynamic>{
+      'audio': true,
+      'video': true,
+    };
+    _localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
+
+    _localStream.getTracks().forEach((track) {
+      _peerConnection.addTrack(track, _localStream);
+    });
+
+    _peerConnection.onIceCandidate = (candidate) {
+      reference.child('candidates').push().set({
+        'from': 'user_A',
+        'candidate': candidate.toMap(),
+      });
+    };
+
+    reference.child('call_request').onValue.listen((event) {
+      if (event.snapshot.value != null) {
+        startVDOCall();
+      } else {
+        // Handle case where no VDO call request is found
+      }
+    });
+  }
+
+  void startVDOCall() async {
+    final offer = await _peerConnection.createOffer({});
+    await _peerConnection.setLocalDescription(offer);
+
+    reference.child('call_response').set({'from': 'user_B'});
+
+    _peerConnection.onIceCandidate = (candidate) {
+      reference.child('candidates').push().set({
+        'from': 'user_B',
+        'candidate': candidate.toMap(),
+      });
+    };
+
+    reference.child('offers').push().set({
+      'from': 'user_B',
+      'offer': {
+        'type': offer.type,
+        'sdp': offer.sdp,
+      },
+    });
   }
 
   @override
   void dispose() {
-    // ห้ามลืม dispose controller เพื่อป้องกันการใช้งานทรัพยากรที่ไม่จำเป็น
-    _controller.dispose();
+    _localStream.dispose();
+    _remoteStream.dispose();
+    _peerConnection.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('กล้อง'),
-      ),
-      // ใช้ FutureBuilder เพื่อให้ UI รอการเริ่มต้นของกล้อง
-      body: FutureBuilder<void>(
-        future: _initializeControllerFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            // ถ้าการเริ่มต้นเสร็จสิ้น ให้แสดงกล้อง
-            return CameraPreview(_controller);
-          } else {
-            // ถ้ายังไม่เสร็จ ให้แสดง Indicator หรือ Loader
-            return Center(child: CircularProgressIndicator());
-          }
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // เพิ่มโค้ดสำหรับการกดปุ่มวางสายที่นี่
-          // เช่น เรียกฟังก์ชันสำหรับการบันทึกภาพหรือวิดีโอที่ถ่ายจากกล้อง
-        },
-        child: Icon(Icons.camera),
+      appBar: AppBar(title: Text('VDO Call')),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            initiateCall();
+          },
+          child: Text('Start VDO Call'),
+        ),
       ),
     );
+  }
+
+  void initiateCall() {
+    reference.child('call_request').set({'from': 'user_A', 'to': 'user_B'});
   }
 }
