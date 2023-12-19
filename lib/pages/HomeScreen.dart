@@ -54,7 +54,7 @@ class HomeScreen extends StatelessWidget {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
-        backgroundColor: Colors.red,
+        backgroundColor: Colors.blue,
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

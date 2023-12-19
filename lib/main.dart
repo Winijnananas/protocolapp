@@ -44,42 +44,48 @@ class BottomTabNavigator extends StatefulWidget {
 class _BottomTabNavigatorState extends State<BottomTabNavigator> {
   int _currentIndex = 0;
   final List<Widget> _tabs = [
-    HomeScreen(), // หน้า HomeScreen
-    CamScreen(), // หน้า CamScreen
-    AboutScreen()
+    HomeScreen(),
+    CamScreen(),
+    AboutScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _tabs[_currentIndex], // แสดงหน้าจอที่เลือกจาก _currentIndex
+      body: _tabs[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor:
+            Colors.blue, // กำหนดสีพื้นหลังของ BottomNavigationBar เป็นสีน้ำเงิน
+        unselectedItemColor:
+            Colors.white, // กำหนดสีของไอคอนที่ไม่ได้เลือกเป็นสีขาว
+        selectedItemColor: Colors.yellow, // กำหนดสีของไอคอนที่เลือกเป็นสีขาว
+        type: BottomNavigationBarType
+            .fixed, // กำหนด type เป็น fixed เพื่อให้แสดงทุกรายการตลอดเวลา
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons
-                .contact_phone), // ใช้ Icon contact_phone จาก Material Icons
-            label: 'Contact Staff', // แก้ไขข้อความ label ตามที่ต้องการ
+            icon: Icon(Icons.contact_phone),
+            label: 'Contact Staff',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.help), // ใช้ Icon contact_phone จาก Material Icons
-            label: 'About', // แก้ไขข้อความ label ตามที่ต้องการ
+            icon: Icon(Icons.help),
+            label: 'About',
           ),
         ],
         currentIndex: _currentIndex,
-        selectedItemColor: Colors.red,
         onTap: (int index) {
           setState(() {
-            _currentIndex = index; // เปลี่ยนหน้าจอตาม index ที่เลือก
+            _currentIndex = index;
           });
         },
       ),
     );
   }
 }
+
 // class MyApp extends StatelessWidget {
 //   @override
 //   Widget build(BuildContext context) => MaterialApp(

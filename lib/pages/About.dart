@@ -29,6 +29,8 @@ class AboutScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 24.0),
+            Divider(height: 1.0, color: Colors.grey), // Add a divider
+            SizedBox(height: 24.0),
             Text(
               'Contact Information',
               style: TextStyle(
@@ -37,23 +39,21 @@ class AboutScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 16.0),
-            Text(
-              'Address: 123 Main Street, City, Country',
-              style: TextStyle(
-                fontSize: 16.0,
-              ),
+            ListTile(
+              leading:
+                  Icon(Icons.location_on), // Use ListTile for better structure
+              title: Text('Address'),
+              subtitle: Text('123 Main Street, City, Country'),
             ),
-            Text(
-              'Phone: +1234567890',
-              style: TextStyle(
-                fontSize: 16.0,
-              ),
+            ListTile(
+              leading: Icon(Icons.phone),
+              title: Text('Phone'),
+              subtitle: Text('+1234567890'),
             ),
-            Text(
-              'Email: example@example.com',
-              style: TextStyle(
-                fontSize: 16.0,
-              ),
+            ListTile(
+              leading: Icon(Icons.email),
+              title: Text('Email'),
+              subtitle: Text('example@example.com'),
             ),
           ],
         ),

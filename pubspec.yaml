@@ -42,9 +42,12 @@ dependencies:
   snippet_coder_utils: ^1.0.15
   carousel_slider: ^4.0.0
   cloud_firestore: ^4.13.4
-  firebase_core: ^2.24.1
-  firebase_database: ^10.3.7
+  firebase_core: ^2.24.2
+  firebase_database: ^10.3.8
   flutter_webrtc: ^0.9.47
+  firebase_auth: ^4.15.2
+  web_socket_channel: ^2.4.0
+  flutter_launcher_icons: ^0.13.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -97,3 +100,9 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+flutter_icons:
+  image_path: "assets/icons/icon.png"
+  android: true
+  ios: true
+  image_path_ios: "assets/icons/icon_ios.png"
+  image_path_android: "assets/icons/icon_android.png"

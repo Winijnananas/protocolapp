@@ -1,14 +1,33 @@
 {
   "project_info": {
-    "project_number": "438996640885",
-    "firebase_url": "https://app-rtc-d7a32-default-rtdb.asia-southeast1.firebasedatabase.app",
-    "project_id": "app-rtc-d7a32",
-    "storage_bucket": "app-rtc-d7a32.appspot.com"
+    "project_number": "952987709788",
+    "firebase_url": "https://flutter-central-project-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "flutter-central-project",
+    "storage_bucket": "flutter-central-project.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:438996640885:android:4d6a0a4455feddd8ea843c",
+        "mobilesdk_app_id": "1:952987709788:android:4425e208dd533528fc5199",
+        "android_client_info": {
+          "package_name": "com.example.centralrtc"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzvzB4pZq8HoxzVnb5LpdoXgD-X60zBAE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:952987709788:android:46f8dd865ea21573fc5199",
         "android_client_info": {
           "package_name": "com.example.protocolapp"
         }
@@ -16,7 +35,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDS4QOV8yWY20A5ppijbLibYz6eN52CjGM"
+          "current_key": "AIzaSyBzvzB4pZq8HoxzVnb5LpdoXgD-X60zBAE"
         }
       ],
       "services": {
